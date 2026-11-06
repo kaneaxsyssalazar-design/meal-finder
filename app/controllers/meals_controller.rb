@@ -22,4 +22,9 @@ class MealsController < ApplicationController
   def show
     @meal = Meal.includes(:category, :area, :tags, meal_ingredients: :ingredient).find(params[:id])
   end
+
+  # GET /meals/random - jump to a random meal
+  def random
+    redirect_to Meal.order(Arel.sql("RANDOM()")).first
+  end
 end
