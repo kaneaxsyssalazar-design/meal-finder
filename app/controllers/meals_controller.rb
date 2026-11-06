@@ -1,6 +1,7 @@
 class MealsController < ApplicationController
   def index
     @categories = Category.order(:name)
+    @areas = Area.order(:name)
     meals = Meal.includes(:category, :area).order(:name)
 
     # 4.1 text search: meal name OR any of its ingredient names
@@ -15,6 +16,7 @@ class MealsController < ApplicationController
 
     # 4.2 restrict the search to one category
     meals = meals.where(category_id: params[:category_id]) if params[:category_id].present?
+    meals = meals.where(area_id: params[:area_id]) if params[:area_id].present?
 
     @meals = meals.page(params[:page]).per(12)   # 3.5 pagination
   end

@@ -1,30 +1,35 @@
 <h1 class="h3 mb-3">Find a meal</h1>
 
-<%# GET form: the search ends up in the URL (/meals?q=chicken&category_id=3), which keeps
-    the filters when you click a pagination link. %>
+<%# GET form: the search ends up in the URL, which keeps the filters when you change page %>
 <%= form_with url: meals_path, method: :get, class: "row g-2 mb-4 align-items-end" do %>
-  <div class="col-12 col-md-6">
+  <div class="col-12 col-md-4">
     <%= label_tag :q, "Meal or ingredient", class: "form-label" %>
     <%= text_field_tag :q, params[:q], class: "form-control", placeholder: "e.g. chicken, pasta, garlic" %>
   </div>
 
-  <div class="col-12 col-md-4">
+  <div class="col-6 col-md-3">
     <%= label_tag :category_id, "Category", class: "form-label" %>
-    <%# 4.2: dropdown that restricts the search to one category.
-        The 4th argument keeps the chosen value selected after searching. %>
+    <%# 4.2: dropdown that restricts the search to one category %>
     <%= select_tag :category_id,
                    options_from_collection_for_select(@categories, :id, :name, params[:category_id]),
                    include_blank: "All categories", class: "form-select" %>
   </div>
 
+  <div class="col-6 col-md-3">
+    <%= label_tag :area_id, "Area", class: "form-label" %>
+    <%# Second dropdown: restricts the search to one area (cuisine) %>
+    <%= select_tag :area_id,
+                   options_from_collection_for_select(@areas, :id, :name, params[:area_id]),
+                   include_blank: "All areas", class: "form-select" %>
+  </div>
+
   <div class="col-12 col-md-2 d-grid">
-    <%# name: nil stops Rails adding "commit=Search" to the URL %>
     <%= submit_tag "Search", name: nil, class: "btn btn-primary" %>
   </div>
 <% end %>
 
-<%# Only show the result count when the user actually searched %>
-<% if params[:q].present? || params[:category_id].present? %>
+<%# Only show the result count when the user searched or filtered %>
+<% if params[:q].present? || params[:category_id].present? || params[:area_id].present? %>
   <p class="text-muted">
     <%= pluralize(@meals.total_count, "meal") %> found.
     <%= link_to "Clear search", meals_path %>
