@@ -28,3 +28,10 @@ Each meal has a category name and an area name. The seed script matches them to 
 Each numbered ingredient field in a meal is matched by name, ignoring case, to a row from the ingredients source. This creates a meal_ingredients row that also keeps the measure (many-to-many).
 The tags string is split on commas, creating tags and meal_tags rows (many-to-many).
 The API’s own ids are stored only as external_id. Rails creates its own primary and foreign keys.
+## Maps (Mapbox)
+
+Create a free account at mapbox.com and copy your default public token (starts with `pk.`). Then:
+
+    MAPBOX_TOKEN=pk.your_token_here rails server
+
+Without the token the app still works; the maps are just hidden.
