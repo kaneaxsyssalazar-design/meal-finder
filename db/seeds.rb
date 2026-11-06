@@ -1,9 +1,89 @@
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Example:
-#
-#   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
-#     MovieGenre.find_or_create_by!(name: genre_name)
-#   end
+require "net/http"
+require "json"
+
+BASE = "https://www.themealdb.com/api/json/v1/1"
+
+# Calls the API and turns the JSON text into a Ruby hash
+def fetch_json(path)
+  JSON.parse(Net::HTTP.get(URI("#{BASE}/#{path}")))
+end
+
+# Finds a record by name (ignoring upper/lower case), or creates it.
+# FIXED: blank or nil names now become "Unknown" instead of crashing on .downcase
+def by_name(model, name)
+  name = name.to_s.strip                       # FIXED: nil becomes "" first
+  name = "Unknown" if name.empty?              # FIXED: fallback name
+  model.where("LOWER(name) = ?", name.downcase).first || model.create!(name: name)
+end
+
+# ---------- Source 1: categories ----------
+puts "Importing categories..."
+fetch_json("categories.php")["categories"].each do |d|
+  c = Category.find_or_initialize_by(name: d["strCategory"])
+  c.update(
+    description:   d["strCategoryDescription"],
+    thumbnail_url: d["strCategoryThumb"],
+    external_id:   d["idCategory"]
+  )
+end
+
+# ---------- Source 2: areas ----------
+puts "Importing areas..."
+fetch_json("list.php?a=list")["meals"].each do |d|
+  next if d["strArea"].to_s.strip.empty?       # FIXED: skip blank area names
+  by_name(Area, d["strArea"])
+end
+
+# ---------- Source 3: ingredients ----------
+puts "Importing ingredients..."
+fetch_json("list.php?i=list")["meals"].each do |d|
+  next if d["strIngredient"].to_s.strip.empty? # FIXED: skip blank ingredient names
+  i = by_name(Ingredient, d["strIngredient"])
+  i.update(
+    description:     d["strDescription"],
+    ingredient_type: d["strType"],
+    external_id:     d["idIngredient"]
+  )
+end
+
+# ---------- Source 4: meals a-z, plus their ingredients and tags ----------
+puts "Importing meals (a-z)... this takes a minute"
+("a".."z").each do |letter|
+  # The API returns {"meals": null} when no meal starts with that letter
+  (fetch_json("search.php?f=#{letter}")["meals"] || []).each do |d|
+    meal = Meal.find_or_initialize_by(external_id: d["idMeal"])
+    meal.assign_attributes(
+      name:          d["strMeal"],
+      instructions:  d["strInstructions"],
+      thumbnail_url: d["strMealThumb"],
+      youtube_url:   d["strYoutube"],
+      source_url:    d["strSource"],
+      category:      by_name(Category, d["strCategory"]),  # one-to-many link
+      area:          by_name(Area, d["strArea"])           # one-to-many link
+    )
+
+    # If validation fails, print why and move on to the next meal
+    unless meal.save
+      puts "Skipped #{d['strMeal']}: #{meal.errors.full_messages}"
+      next
+    end
+
+    # Ingredients: the API uses numbered fields strIngredient1..20 / strMeasure1..20
+    (1..20).each do |n|
+      name = d["strIngredient#{n}"].to_s.strip
+      next if name.empty?                        # unused slot
+      MealIngredient.find_or_create_by!(meal: meal, ingredient: by_name(Ingredient, name)) do |mi|
+        mi.measure = d["strMeasure#{n}"].to_s.strip
+      end
+    end
+
+        # Tags: one comma separated string like "Meat,Casserole"
+    d["strTags"].to_s.split(",").map(&:strip).reject(&:empty?).each do |t|
+      MealTag.find_or_create_by!(meal: meal, tag: by_name(Tag, t))
+    end
+  end
+  print "#{letter} "                             # progress indicator
+end
+
+# ---------- Summary ----------
+puts "\nTotal rows: #{[Category, Area, Ingredient, Tag, Meal, MealIngredient, MealTag].sum(&:count)}"
