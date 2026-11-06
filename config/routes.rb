@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   # Home page = list of all meals
-  root "meals#index"
+  root "pages#home"
 
   # List page (index) and detail page (show) for each model
   resources :meals, only: [:index, :show]

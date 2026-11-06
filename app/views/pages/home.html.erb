@@ -1,0 +1,54 @@
+<%# ---------- Welcome section with a quick search box ---------- %>
+<section class="p-4 p-md-5 mb-4 border rounded text-center">
+  <h1 class="display-6">Welcome to Meal Finder</h1>
+  <p class="lead">Search thousands of recipes by meal or ingredient.</p>
+
+  <%# Sends the search to the Meals page, which does the real searching (4.1) %>
+  <%= form_with url: meals_path, method: :get, class: "row g-2 justify-content-center" do %>
+    <div class="col-12 col-md-6">
+      <%= label_tag :q, "Search meals", class: "visually-hidden" %>
+      <%= text_field_tag :q, nil, class: "form-control form-control-lg", placeholder: "Try chicken, pasta or garlic" %>
+    </div>
+    <div class="col-12 col-md-2 d-grid">
+      <%= submit_tag "Search", name: nil, class: "btn btn-primary btn-lg" %>
+    </div>
+  <% end %>
+</section>
+
+<%# ---------- Browse by category ---------- %>
+<h2 class="h4 mb-3">Browse by category</h2>
+<div class="d-flex flex-wrap gap-2 mb-5">
+  <% @categories.each do |category| %>
+    <%= link_to category.name, category_path(category), class: "btn btn-outline-secondary btn-sm" %>
+  <% end %>
+</div>
+
+<%# ---------- Random meals (changes on every refresh) ---------- %>
+<h2 class="h4 mb-3">Meals to try</h2>
+
+<%# ERB conditional: only draw the grid if there are meals %>
+<% if @random_meals.any? %>
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3">
+    <% @random_meals.each do |meal| %>
+      <div class="col">
+        <div class="card h-100 meal-card">
+          <% if meal.thumbnail_url.present? %>
+            <%= link_to meal_path(meal) do %>
+              <%= image_tag "#{meal.thumbnail_url}/small", class: "card-img-top", alt: meal.name %>
+            <% end %>
+          <% end %>
+          <div class="card-body">
+            <h3 class="h6 card-title"><%= link_to meal.name, meal_path(meal) %></h3>
+            <p class="card-text small text-muted mb-0">
+              <%= link_to meal.category.name, category_path(meal.category) %> &middot;
+              <%= link_to meal.area.name, area_path(meal.area) %>
+            </p>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  <p class="mt-4"><%= link_to "See all meals", meals_path, class: "btn btn-primary" %></p>
+<% else %>
+  <div class="alert alert-warning">No meals yet. Run <code>rails db:seed</code>.</div>
+<% end %>
