@@ -1,2 +1,44 @@
-<h1>Pages#about</h1>
-<p>Find me in app/views/pages/about.html.erb</p>
+<h1 class="h3 mb-3">About Meal Finder</h1>
+<p>
+  A Rails app for browsing and searching recipes. All data comes from the free
+  <a href="https://www.themealdb.com/api.php">TheMealDB API</a> and is copied into the local
+  database by <code>db/seeds.rb</code>.
+</p>
+
+<h2 class="h5 mt-4">Data sources</h2>
+<div class="table-responsive">
+  <table class="table table-sm table-bordered bg-white">
+    <thead><tr><th scope="col">Endpoint</th><th scope="col">Data</th><th scope="col">Stored in</th></tr></thead>
+    <tbody>
+      <tr><td><code>categories.php</code></td><td>Categories with description and picture</td><td>categories</td></tr>
+      <tr><td><code>list.php?a=list</code></td><td>Areas (cuisines)</td><td>areas</td></tr>
+      <tr><td><code>list.php?i=list</code></td><td>Ingredients with descriptions</td><td>ingredients</td></tr>
+      <tr><td><code>search.php?f=a to z</code></td><td>All meals, with up to 20 ingredients and tags</td><td>meals, meal_ingredients, tags, meal_tags</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h2 class="h5 mt-4">How the data fits together</h2>
+<ul>
+  <li>A category has many meals; an area has many meals (one-to-many).</li>
+  <li>Meals and ingredients are many-to-many through <code>meal_ingredients</code>, which also stores the measure.</li>
+  <li>Meals and tags are many-to-many through <code>meal_tags</code>.</li>
+</ul>
+
+<h2 class="h5 mt-4">ERD</h2>
+<pre class="bg-white border rounded p-3 small">
+categories (1) ---- (N) meals (N) ---- (1) areas
+                         |
+         +---------------+---------------+
+   meal_ingredients (N)             meal_tags (N)
+         |                               |
+   ingredients (1)                   tags (1)
+</pre>
+
+<h2 class="h5 mt-4">Rows in the database</h2>
+<ul class="list-unstyled">
+  <% { "Categories" => Category.count, "Areas" => Area.count, "Ingredients" => Ingredient.count,
+       "Tags" => Tag.count, "Meals" => Meal.count }.each do |label, n| %>
+    <li><%= label %>: <strong><%= n %></strong></li>
+  <% end %>
+</ul>
