@@ -1,10 +1,10 @@
-class CategoriesController < ApplicationController
+class TagsController < ApplicationController
   def index
-    @categories = Category.order(:name)
+    @tags = Tag.order(:name)
   end
 
   def show
-    @category = Category.find(params[:id])
-    @meals = @category.meals.includes(:category, :area).order(:name).page(params[:page]).per(12)
+    @tag = Tag.find(params[:id])
+    @meals = @tag.meals.includes(:category, :area).order(:name).page(params[:page]).per(12)
   end
 end

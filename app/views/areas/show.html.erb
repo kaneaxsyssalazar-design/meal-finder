@@ -4,8 +4,6 @@
     <li class="breadcrumb-item active" aria-current="page"><%= @area.name %></li>
   </ol>
 </nav>
-
 <h1 class="h3 mb-1"><%= @area.name %> meals</h1>
 <p class="text-muted"><%= pluralize(@meals.total_count, "meal") %></p>
-
 <%= render "meals/grid", meals: @meals %>
