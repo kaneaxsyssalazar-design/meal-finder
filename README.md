@@ -35,3 +35,24 @@ Create a free account at mapbox.com and copy your default public token (starts w
     MAPBOX_TOKEN=pk.your_token_here rails server
 
 Without the token the app still works; the maps are just hidden.
+
+# Meal Finder
+
+A Ruby on Rails app for browsing and searching recipes, using data from the free
+[TheMealDB API](https://www.themealdb.com/api.php).
+
+## Features
+- Home page, plus lists and detail pages for meals, categories, areas, ingredients and tags
+- Search by meal or ingredient name, filtered by category and/or area
+- Pagination (kaminari), Bootstrap 5 dark theme
+- Random "Surprise me" meal
+- Maps of each cuisine's country (Mapbox)
+
+## Setup
+    bundle install
+    rails db:create db:migrate db:seed
+    rails server
+
+## Data
+Four TheMealDB endpoints are imported by `db/seeds.rb`: categories, areas, ingredients and meals.
+Tables: categories, areas, ingredients, tags, meals, meal_ingredients, meal_tags.
