@@ -4,6 +4,16 @@
     <li class="breadcrumb-item active" aria-current="page"><%= @area.name %></li>
   </ol>
 </nav>
+
 <h1 class="h3 mb-1"><%= @area.name %> meals</h1>
 <p class="text-muted"><%= pluralize(@meals.total_count, "meal") %></p>
+
+<%# 3.6 MAP: centred on this area. Only shown when it has coordinates and a token is set. %>
+<% if mapbox_map_url(@area) %>
+  <figure class="mb-4">
+    <%= image_tag mapbox_map_url(@area), class: "img-fluid rounded border", alt: "Map showing #{@area.name}" %>
+    <figcaption class="small text-muted">&copy; Mapbox &copy; OpenStreetMap contributors</figcaption>
+  </figure>
+<% end %>
+
 <%= render "meals/grid", meals: @meals %>
