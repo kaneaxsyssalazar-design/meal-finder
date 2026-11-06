@@ -87,3 +87,25 @@ end
 
 # ---------- Summary ----------
 puts "\nTotal rows: #{[Category, Area, Ingredient, Tag, Meal, MealIngredient, MealTag].sum(&:count)}"
+# ---------- Map coordinates ----------
+# TheMealDB only gives area NAMES, so we add the approximate centre of each
+# country ourselves, as [latitude, longitude], for the Mapbox maps.
+AREA_COORDINATES = {
+  "American" => [39.8, -98.6], "British" => [54.0, -2.0], "Canadian" => [56.1, -106.3],
+  "Chinese" => [35.9, 104.2], "Croatian" => [45.1, 15.2], "Dutch" => [52.1, 5.3],
+  "Egyptian" => [26.8, 30.8], "Filipino" => [12.9, 121.8], "French" => [46.2, 2.2],
+  "Greek" => [39.1, 21.8], "Indian" => [20.6, 78.9], "Irish" => [53.4, -8.2],
+  "Italian" => [41.9, 12.6], "Jamaican" => [18.1, -77.3], "Japanese" => [36.2, 138.3],
+  "Kenyan" => [-0.02, 37.9], "Malaysian" => [4.2, 102.0], "Mexican" => [23.6, -102.6],
+  "Moroccan" => [31.8, -7.1], "Polish" => [51.9, 19.1], "Portuguese" => [39.4, -8.2],
+  "Russian" => [61.5, 105.3], "Spanish" => [40.5, -3.7], "Thai" => [15.9, 101.0],
+  "Tunisian" => [33.9, 9.5], "Turkish" => [39.0, 35.2], "Ukrainian" => [48.4, 31.2],
+  "Uruguayan" => [-32.5, -55.8], "Vietnamese" => [14.1, 108.3], "Algerian" => [28.0, 1.7],
+  "Argentinian" => [-38.4, -63.6], "Australian" => [-25.3, 133.8], "Norwegian" => [60.5, 8.5],
+  "Saudi Arabian" => [23.9, 45.1], "Slovakian" => [48.7, 19.7], "Syrian" => [34.8, 39.0],
+  "Venezulan" => [6.4, -66.6], "Venezuelan" => [6.4, -66.6]
+}
+AREA_COORDINATES.each do |name, (lat, lon)|
+  Area.where(name: name).update_all(latitude: lat, longitude: lon)
+end
+puts "Areas with coordinates: #{Area.where.not(latitude: nil).count}"
