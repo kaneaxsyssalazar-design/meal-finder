@@ -1,2 +1,12 @@
-<h1>Categories#show</h1>
-<p>Find me in app/views/categories/show.html.erb</p>
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><%= link_to "Categories", categories_path %></li>
+    <li class="breadcrumb-item active" aria-current="page"><%= @category.name %></li>
+  </ol>
+</nav>
+
+<h1 class="h3"><%= @category.name %></h1>
+<p><%= @category.description %></p>
+<p class="text-muted"><%= pluralize(@meals.total_count, "meal") %> in this category</p>
+
+<%= render "meals/grid", meals: @meals %>

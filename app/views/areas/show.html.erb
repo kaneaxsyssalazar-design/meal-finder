@@ -1,2 +1,11 @@
-<h1>Areas#show</h1>
-<p>Find me in app/views/areas/show.html.erb</p>
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><%= link_to "Areas", areas_path %></li>
+    <li class="breadcrumb-item active" aria-current="page"><%= @area.name %></li>
+  </ol>
+</nav>
+
+<h1 class="h3 mb-1"><%= @area.name %> meals</h1>
+<p class="text-muted"><%= pluralize(@meals.total_count, "meal") %></p>
+
+<%= render "meals/grid", meals: @meals %>

@@ -1,2 +1,10 @@
-<h1>Tags#index</h1>
-<p>Find me in app/views/tags/index.html.erb</p>
+<h1 class="h3 mb-3">Tags</h1>
+<% if @tags.empty? %>
+  <div class="alert alert-warning">No tags yet. Run <code>rails db:seed</code>.</div>
+<% else %>
+  <div class="d-flex flex-wrap gap-2">
+    <% @tags.each do |tag| %>
+      <%= link_to "#{tag.name} (#{tag.meals.size})", tag_path(tag), class: "btn btn-outline-secondary btn-sm" %>
+    <% end %>
+  </div>
+<% end %>

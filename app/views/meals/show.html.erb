@@ -1,2 +1,58 @@
-<h1>Meals#show</h1>
-<p>Find me in app/views/meals/show.html.erb</p>
+<%# Breadcrumb: links back up the hierarchy (3.4) %>
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><%= link_to "Meals", meals_path %></li>
+    <li class="breadcrumb-item"><%= link_to @meal.category.name, category_path(@meal.category) %></li>
+    <li class="breadcrumb-item active" aria-current="page"><%= @meal.name %></li>
+  </ol>
+</nav>
+
+<h1 class="h2 mb-3"><%= @meal.name %></h1>
+
+<div class="row g-4">
+  <%# Left column: picture and facts. On phones the columns stack. %>
+  <div class="col-12 col-md-5">
+    <% if @meal.thumbnail_url.present? %>
+      <%= image_tag "#{@meal.thumbnail_url}/large", class: "img-fluid rounded mb-3", alt: @meal.name %>
+    <% end %>
+
+    <ul class="list-group mb-3">
+      <li class="list-group-item"><strong>Category:</strong> <%= link_to @meal.category.name, category_path(@meal.category) %></li>
+      <li class="list-group-item"><strong>Area:</strong> <%= link_to @meal.area.name, area_path(@meal.area) %></li>
+
+      <%# Many meals have no tags, so check before showing the row %>
+      <% if @meal.tags.any? %>
+        <li class="list-group-item">
+          <strong>Tags:</strong>
+          <% @meal.tags.each do |tag| %>
+            <%= link_to tag.name, tag_path(tag), class: "badge text-bg-secondary text-decoration-none" %>
+          <% end %>
+        </li>
+      <% end %>
+
+      <% if @meal.youtube_url.present? %>
+        <li class="list-group-item"><%= link_to "Watch on YouTube", @meal.youtube_url, target: "_blank", rel: "noopener" %></li>
+      <% end %>
+    </ul>
+  </div>
+
+  <%# Right column: ingredients and instructions %>
+  <div class="col-12 col-md-7">
+    <h2 class="h4">Ingredients</h2>
+    <table class="table table-sm table-striped">
+      <thead><tr><th scope="col">Ingredient</th><th scope="col">Amount</th></tr></thead>
+      <tbody>
+        <%# meal_ingredients is the join model, so each row gives us the ingredient AND its measure %>
+        <% @meal.meal_ingredients.each do |mi| %>
+          <tr>
+            <td><%= link_to mi.ingredient.name, ingredient_path(mi.ingredient) %></td>
+            <td><%= mi.measure %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <h2 class="h4 mt-4">Instructions</h2>
+    <%= simple_format(@meal.instructions) %>
+  </div>
+</div>

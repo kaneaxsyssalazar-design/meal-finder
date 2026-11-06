@@ -1,2 +1,11 @@
-<h1>Ingredients#index</h1>
-<p>Find me in app/views/ingredients/index.html.erb</p>
+<h1 class="h3 mb-3">Ingredients <small class="text-muted fs-6">(<%= @ingredients.total_count %> total)</small></h1>
+
+<div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-2">
+  <% @ingredients.each do |ingredient| %>
+    <div class="col">
+      <div class="border rounded bg-white p-2 h-100"><%= link_to ingredient.name, ingredient_path(ingredient) %></div>
+    </div>
+  <% end %>
+</div>
+
+<%= paginate @ingredients %>

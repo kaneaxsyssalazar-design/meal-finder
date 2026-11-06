@@ -1,2 +1,11 @@
-<h1>Areas#index</h1>
-<p>Find me in app/views/areas/index.html.erb</p>
+<h1 class="h3 mb-3">Areas</h1>
+<div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
+  <% @areas.each do |area| %>
+    <div class="col">
+      <div class="card h-100"><div class="card-body">
+        <h2 class="h6 card-title mb-1"><%= link_to area.name, area_path(area) %></h2>
+        <span class="text-muted small"><%= pluralize(area.meals.size, "meal") %></span>
+      </div></div>
+    </div>
+  <% end %>
+</div>

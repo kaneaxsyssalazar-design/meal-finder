@@ -1,2 +1,19 @@
-<h1>Ingredients#show</h1>
-<p>Find me in app/views/ingredients/show.html.erb</p>
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><%= link_to "Ingredients", ingredients_path %></li>
+    <li class="breadcrumb-item active" aria-current="page"><%= @ingredient.name %></li>
+  </ol>
+</nav>
+
+<h1 class="h3"><%= @ingredient.name %></h1>
+
+<%# Description and type are optional in the API, so check first %>
+<% if @ingredient.ingredient_type.present? %>
+  <p><span class="badge text-bg-info"><%= @ingredient.ingredient_type %></span></p>
+<% end %>
+<% if @ingredient.description.present? %>
+  <p><%= truncate(@ingredient.description, length: 600) %></p>
+<% end %>
+
+<h2 class="h5 mt-4">Meals using <%= @ingredient.name %> (<%= @meals.total_count %>)</h2>
+<%= render "meals/grid", meals: @meals %>

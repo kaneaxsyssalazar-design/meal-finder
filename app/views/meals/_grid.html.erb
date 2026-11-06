@@ -1,0 +1,33 @@
+<%# Shows a paginated list of meals as Bootstrap cards. Pass it a "meals" collection. %>
+
+<%# 5.2 ERB CONDITIONAL: show a message if there are no results %>
+<% if meals.empty? %>
+  <div class="alert alert-warning">No meals found.</div>
+<% else %>
+  <%# Grid: 1 card per row on phones, 2 on tablets, 3 on laptops, 4 on big screens %>
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-3">
+    <% meals.each do |meal| %>
+      <div class="col">
+        <div class="card h-100 meal-card">
+          <%# Only show a picture if the meal has one. "/small" is TheMealDB's resized version. %>
+          <% if meal.thumbnail_url.present? %>
+            <%= link_to meal_path(meal) do %>
+              <%= image_tag "#{meal.thumbnail_url}/small", class: "card-img-top", alt: meal.name %>
+            <% end %>
+          <% end %>
+          <div class="card-body">
+            <h2 class="h6 card-title"><%= link_to meal.name, meal_path(meal) %></h2>
+            <p class="card-text small text-muted mb-0">
+              <%# Links to the parent pages = hierarchical navigation (3.4) %>
+              <%= link_to meal.category.name, category_path(meal.category) %> &middot;
+              <%= link_to meal.area.name, area_path(meal.area) %>
+            </p>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <%# Kaminari helper: draws the page number links (3.5) %>
+  <%= paginate meals %>
+<% end %>
