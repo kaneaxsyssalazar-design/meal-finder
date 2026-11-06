@@ -1,4 +1,16 @@
 <h1 class="h3 mb-3">Areas</h1>
+
+<%# 3.6 MAP: one map with a pin for every area that has coordinates %>
+<% if mapbox_map_url(@areas, height: 450) %>
+  <figure class="mb-4">
+    <%= image_tag mapbox_map_url(@areas, height: 450), class: "img-fluid rounded border", alt: "World map of all cuisines" %>
+    <figcaption class="small text-muted">&copy; Mapbox &copy; OpenStreetMap contributors</figcaption>
+  </figure>
+<% else %>
+  <%# Tells you why there's no map while you're developing %>
+  <div class="alert alert-info">Map hidden. Start the server with <code>MAPBOX_TOKEN=pk.your_token rails server</code>.</div>
+<% end %>
+
 <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
   <% @areas.each do |area| %>
     <div class="col">
