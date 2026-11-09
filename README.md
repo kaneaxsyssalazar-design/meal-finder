@@ -30,7 +30,7 @@ The tags string is split on commas, creating tags and meal_tags rows (many-to-ma
 The API’s own ids are stored only as external_id. Rails creates its own primary and foreign keys.
 ## Maps (Mapbox)
 
-Create a free account at mapbox.com and copy your default public token (starts with `pk.`). Then:
+ at mapbox.com and copy your default public token (starts with `pk.`). Then:
 
     MAPBOX_TOKEN=pk.your_token_here rails server
 
